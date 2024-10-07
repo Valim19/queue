@@ -1,7 +1,9 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class Deque <Item> implements Iterable <Item> {
+public class Deque<Item> implements Iterable<Item> {
+    private static final int DEQUE_SIZE = 10;
+    private static final int MAX_VALUE = DEQUE_SIZE - 1;
     private Node first;
     private Node last;
     private int  counter;
@@ -65,25 +67,25 @@ public class Deque <Item> implements Iterable <Item> {
         return removedFirst.item;
     }
 
-    public Item removeLast(){
+    public Item removeLast() {
         validateNotEmpty();
 
         Node removedLast = last;
         last             = removedLast.previous;
         counter--;
 
-        if(isEmpty()) { first = null; }
+        if (isEmpty()) { first = null; }
         else { last.next      = null; }
 
         return removedLast.item;
     }
 
-    public Iterator<Item> iterator(){
+    public Iterator<Item> iterator() {
         return new DequeIterator();
     }
     public static void main(String[] args) {
         Deque<Integer> deck = new Deque<Integer>();
-        
+
         testIsEmpty(deck);
         testAddFirst(deck);
         testRemoveLast(deck);
@@ -105,25 +107,26 @@ public class Deque <Item> implements Iterable <Item> {
     }
 
     private static void testAddFirst(Deque<Integer> deck) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < DEQUE_SIZE; i++) {
             deck.addFirst(i);
             assert deck.size() == i + 1 : "Size should increase as elements are added";
             assert !deck.isEmpty() : "Deck should not be empty after adding elements";
         }
 
-        int expected = 9;
+        int expected = MAX_VALUE;
         for (Integer i : deck) {
-            assert i == expected-- : "Elements should appear from 9 to 0";
+            assert i == expected : "Elements should appear from 9 to 0";
+            expected--;
         }
 
         System.out.println("testAddFirst passed.");
     }
 
     private static void testRemoveLast(Deque<Integer> deck) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < DEQUE_SIZE; i++) {
             int removed = deck.removeLast();
             assert removed == i : "Elements should be removed from 0 to 9";
-            assert deck.size() == 9 - i : "Size should decrease as elements are removed";
+            assert deck.size() == MAX_VALUE - i : "Size should decrease as elements are removed";
         }
 
         assert deck.isEmpty() : "Deck should be empty after removing all elements";
@@ -131,25 +134,26 @@ public class Deque <Item> implements Iterable <Item> {
     }
 
     private static void testAddLast(Deque<Integer> deck) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < DEQUE_SIZE; i++) {
             deck.addLast(i);
             assert deck.size() == i + 1 : "Size should increase as elements are added";
             assert !deck.isEmpty() : "Deck should not be empty after adding elements";
         }
-        
+
         int expected = 0;
         for (Integer i : deck) {
-            assert i == expected++ : "Elements should appear from 0 to 9";
+            assert i == expected : "Elements should appear from 0 to 9";
+            expected++;
         }
 
         System.out.println("testAddLast passed.");
     }
 
     private static void testRemoveFirst(Deque<Integer> deck) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < DEQUE_SIZE; i++) {
             int removed = deck.removeFirst();
             assert removed == i : "Elements should be removed from 0 to 9";
-            assert deck.size() == 9 - i : "Size should decrease as elements are removed";
+            assert deck.size() == MAX_VALUE - i : "Size should decrease as elements are removed";
         }
 
         assert deck.isEmpty() : "Deck should be empty after removing all elements";
@@ -161,7 +165,7 @@ public class Deque <Item> implements Iterable <Item> {
         Node next;
         Node previous;
 
-        Node(){}
+        Node() { }
 
         Node(Item item, Node next) {
             this.item = item;
@@ -175,7 +179,7 @@ public class Deque <Item> implements Iterable <Item> {
         }
     }
 
-    private class DequeIterator implements Iterator<Item>{
+    private class DequeIterator implements Iterator<Item> {
         private Node current = first;
 
         public Item next() {
@@ -187,7 +191,7 @@ public class Deque <Item> implements Iterable <Item> {
             return item;
         }
 
-        public boolean hasNext() { return current != null;}
+        public boolean hasNext() { return current != null; }
 
         public void remove() {
             throw new UnsupportedOperationException("Operation not supported by this class");

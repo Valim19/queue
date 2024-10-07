@@ -1,8 +1,7 @@
-import java.lang.*;
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
     private int arraySize;
@@ -15,7 +14,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         this.elementsCounter = 0;
     }
 
-    public int size(){
+    public int size() {
         return elementsCounter;
     }
 
@@ -51,16 +50,17 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public Iterator<Item> iterator() {
         return new RandomizedQueueIterator();
     }
+
     public static void main(String[] args) {
         RandomizedQueue<Integer> queue = new RandomizedQueue<>();
-    
+
         testIsEmpty(queue);
         testEnqueue(queue);
         testDequeue(queue);
         testSample(queue);
         testIterator(queue);
     }
-    
+
     private void validateNotNull(Item item) {
         if (item == null) throw new IllegalArgumentException("Item cannot be a null element");
     }
@@ -70,13 +70,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resize(int capacity) {
-        if (isEmpty()) return;
+        if (isEmpty()) { return; }
 
         arraySize = capacity;
         Item[] copy = (Item[]) new Object[arraySize];
 
         int maxSize = size();
-        for (int i = 0; i < maxSize; i++) copy[i] = elements[i];
+        if (maxSize >= 0) System.arraycopy(elements, 0, copy, 0, maxSize);
 
         elements = copy;
     }
@@ -94,7 +94,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         assert queue.size() == 0 : "Size should be 0 when the queue is empty";
         System.out.println("testIsEmpty passed.");
     }
-    
+
     private static void testEnqueue(RandomizedQueue<Integer> queue) {
         for (int i = 0; i < 5; i++) {
             queue.enqueue(i);
@@ -103,42 +103,42 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
         System.out.println("testEnqueue passed.");
     }
-    
+
     private static void testDequeue(RandomizedQueue<Integer> queue) {
         int initialSize = queue.size();
         int elementsRemoved = 0;
-    
+
         for (int i = 0; i < initialSize; i++) {
             Integer removed = queue.dequeue();
             assert removed != null : "Dequeued element should not be null";
             elementsRemoved++;
             assert queue.size() == initialSize - elementsRemoved : "Size should decrease after dequeue";
         }
-    
+
         assert queue.isEmpty() : "Queue should be empty after removing all elements";
         System.out.println("testDequeue passed.");
     }
-    
+
     private static void testSample(RandomizedQueue<Integer> queue) {
         for (int i = 0; i < 5; i++) {
             queue.enqueue(i);
         }
-    
+
         Integer sampled = queue.sample();
         assert sampled != null : "Sampled element should not be null";
         assert queue.size() == 5 : "Sampling should not remove elements from the queue";
         System.out.println("testSample passed.");
     }
-    
+
     private static void testIterator(RandomizedQueue<Integer> queue) {
         int initialSize = queue.size();
         int count = 0;
-    
+
         for (Integer i : queue) {
             assert i != null : "Iterator should return non-null elements";
             count++;
         }
-    
+
         assert count == initialSize : "Iterator should iterate over all elements";
         assert queue.size() == initialSize : "Iterator should not modify the size of the queue";
         System.out.println("testIterator passed.");
@@ -153,7 +153,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private int randomIndex() {
-        return StdRandom.uniform(size());
+        return StdRandom.uniformInt(size());
     }
 
     private Item removeRandomItemAndReorder() {
@@ -169,7 +169,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return item;
     }
 
-    private class RandomizedQueueIterator {
+    private class RandomizedQueueIterator implements Iterator<Item> {
         private final RandomizedQueue<Item> copy;
 
         RandomizedQueueIterator() {
@@ -182,16 +182,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         public Item next() {
             if (!hasNext()) throw new java.util.NoSuchElementException("There are no more elements");
-            
+
             return copy.dequeue();
         }
 
         public boolean hasNext() {
             return copy.size() > 0;
-        }
-        
-        public void remove() {
-            throw new UnsupportedOperationException("This operation is not supported by this class");
         }
     }
 }
